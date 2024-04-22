@@ -1,11 +1,12 @@
 import { Router } from "express"
+import { ListController } from "../controllers/list.controller"
 
 const router: Router = Router()
 
-router.get("/", getLists)
-router.post("/", createList)
-router.get("/:id", getList)
-router.put("/:id", updateList)
-router.delete("/:id", deleteList)
+router.get("/", ListController.getLists)
+router.post("/", ListController.createList)
+router.get("/:id", ListController.getList)
+router.put("/:id", ListController.updateList)
+router.delete("/:id", ListController.deleteList)
 
 export default router
