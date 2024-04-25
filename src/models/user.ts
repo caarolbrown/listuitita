@@ -2,6 +2,7 @@ class User {
     id: number
     email: string
     password: string
+    deleted: boolean = false
    
     constructor(id: number, email: string, password: string){
         this.id = id

@@ -7,8 +7,9 @@ class List {
   title: string
   movie: Movie[]
   tvShow: TvShow[]
+  deleted: boolean = false
 
-  constructor(id: number, userId: number, title: string, movie: [], tvShow: []) {
+  constructor(id: number, userId: number, title: string, movie: Movie[], tvShow: TvShow[]) {
     this.id = id
     this.userId = userId
     this.title = title
