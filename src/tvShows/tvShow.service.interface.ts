@@ -1,4 +1,4 @@
-import TvShow from "../models/tvShow";
+import TvShow from "./tvShow.model";
 
 export default interface TvShowServiceInterface {
   getTvShows(): TvShow[]

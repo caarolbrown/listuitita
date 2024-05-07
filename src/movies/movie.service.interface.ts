@@ -1,4 +1,4 @@
-import Movie from "../models/movie";
+import Movie from "./movie.model";
 
 export default interface MovieServiceInterface {
     getMovies(): Movie[]

@@ -1,8 +1,8 @@
 import { Router } from "express"
-import listRouter from "./list.router"
-import movieRouter from "./movie.router"
-import tvShowRouter from "./tvShow.router"
-import userRouter from "./user.router"
+import listRouter from "../lists/list.router"
+import movieRouter from "../movies/movie.router"
+import tvShowRouter from "../tvShows/tvShow.router"
+import userRouter from "../users/user.router"
 
 const router = Router()
 

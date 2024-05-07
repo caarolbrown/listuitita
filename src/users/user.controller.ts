@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
-import { UserServiceMock } from "../services/user.service.mock"
-import UserServiceInterface from "../services/user.service.interface"
-import User from "../models/user"
+import { UserServiceMock } from "./user.service.mock"
+import UserServiceInterface from "./user.service.interface"
+import User from "./user.model"
 
 export class UserController {
   public static async getUsers(_req: Request, res: Response) {

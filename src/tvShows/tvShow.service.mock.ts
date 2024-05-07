@@ -1,4 +1,4 @@
-import TvShow from "../models/tvShow";
+import TvShow from "./tvShow.model";
 import TvShowServiceInterface from "./tvShow.service.interface";
 
 export class TvShowServiceMock implements TvShowServiceInterface {

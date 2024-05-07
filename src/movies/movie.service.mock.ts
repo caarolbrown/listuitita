@@ -1,4 +1,4 @@
-import Movie from "../models/movie";
+import Movie from "./movie.model";
 import MovieServiceInterface from "./movie.service.interface";
 
 export class MovieServiceMock implements MovieServiceInterface {

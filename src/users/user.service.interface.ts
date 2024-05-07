@@ -1,4 +1,4 @@
-import User from "../models/user";
+import User from "./user.model";
 
 export default interface UserServiceInterface {
     getUsers(): User[]

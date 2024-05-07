@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { TvShowController } from "../controllers/tvShow.controller"
+import { TvShowController } from "./tvShow.controller"
 
 const router: Router = Router()
 

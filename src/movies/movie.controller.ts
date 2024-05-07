@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
-import { MovieServiceMock } from "../services/movie.service.mock"
-import MovieServiceInterface from "../services/movie.service.interface"
-import Movie from "../models/movie"
+import { MovieServiceMock } from "./movie.service.mock"
+import MovieServiceInterface from "./movie.service.interface"
+import Movie from "./movie.model"
 
 export class MovieController {
   public static async getMovies(_req: Request, res: Response) {

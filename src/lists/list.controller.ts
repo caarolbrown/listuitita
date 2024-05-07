@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
-import { ListServiceMock } from "../services/list.service.mock";
-import ListServiceInterface from "../services/list.service.interface";
-import List from "../models/list";
+import { ListServiceMock } from "./list.service.mock";
+import ListServiceInterface from "./list.service.interface";
+import List from "./list.model";
+import MovieServiceInterface from "../movies/movie.service.interface";
+import { MovieServiceMock } from "../movies/movie.service.mock";
+import Movie from "../movies/movie.model";
 
 export class ListController {
   public static async getLists(_req: Request, res: Response) {
@@ -17,11 +20,18 @@ export class ListController {
   public static async createList(req: Request, res: Response) {
     try {
       const listService: ListServiceInterface = new ListServiceMock()
+      const movieService: MovieServiceInterface = new MovieServiceMock()
+      const movieIds: number[] = req.body.movie_ids
+      const movies: Movie[] = []
+      for (const movieId of movieIds) {
+        const movie = movieService.getMovie(movieId)
+        if (movie instanceof Movie) movies.push(movie)
+      }
       let newList: List | undefined = new List(
         -1,
         req.body.userId,
         req.body.title,
-        req.body.movies,
+        movies,
         req.body.tvShows
       )
       newList = listService.createList(newList)

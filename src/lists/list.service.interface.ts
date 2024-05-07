@@ -1,4 +1,4 @@
-import List from "../models/list";
+import List from "./list.model";
 
 export default interface ListServiceInterface {
     getLists(): List[]

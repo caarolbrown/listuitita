@@ -1,5 +1,5 @@
-import Movie from "./movie"
-import TvShow from "./tvShow"
+import Movie from "../movies/movie.model"
+import TvShow from "../tvShows/tvShow.model"
 
 class List {
   id: number

@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
-import TvShowServiceInterface from "../services/tvShow.service.interface"
-import { TvShowServiceMock } from "../services/tvShow.service.mock"
-import TvShow from "../models/tvShow"
+import TvShowServiceInterface from "./tvShow.service.interface"
+import { TvShowServiceMock } from "./tvShow.service.mock"
+import TvShow from "./tvShow.model"
 
 export class TvShowController {
   public static async getTvShows(_req: Request, res: Response){

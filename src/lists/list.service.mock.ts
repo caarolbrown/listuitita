@@ -1,6 +1,6 @@
-import List from "../models/list";
-import Movie from "../models/movie";
-import TvShow from "../models/tvShow";
+import List from "./list.model";
+import Movie from "../movies/movie.model";
+import TvShow from "../tvShows/tvShow.model";
 import ListServiceInterface from "./list.service.interface";
 
 export class ListServiceMock implements ListServiceInterface {

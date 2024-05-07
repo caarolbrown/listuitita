@@ -1,4 +1,4 @@
-import User from "../models/user";
+import User from "./user.model";
 import UserServiceInterface from "./user.service.interface";
 
 export class UserServiceMock implements UserServiceInterface {
@@ -55,6 +55,7 @@ export class UserServiceMock implements UserServiceInterface {
     for (const user of this.users) {
       if (user.id === id) {
         user.deleted = true
+        return user
       }
     }
     return undefined
