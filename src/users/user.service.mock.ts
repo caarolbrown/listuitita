@@ -1,3 +1,5 @@
+import { AppError } from "../error/error";
+import HttpCode from "../httpCode/httpCode.model";
 import User from "./user.model";
 import UserServiceInterface from "./user.service.interface";
 
@@ -22,10 +24,10 @@ export class UserServiceMock implements UserServiceInterface {
     return this.users
   }
 
-  createUser(newUser: User): User | undefined {
+  createUser(newUser: User): User {
     for (const user of this.users) {
       if (user.email === newUser.email) {
-        return undefined
+        throw new AppError('User already exists', HttpCode.BadRequest, `User with this email: ${newUser.email} already exists`)
       }
     }
 
@@ -34,30 +36,30 @@ export class UserServiceMock implements UserServiceInterface {
     return this.users[this.users.length -1]
   }
 
-  getUser(id: number): User | undefined {
+  getUser(id: number): User {
     for (const user of this.users) {
       if (user.id === id)
         return user
     }
-    return undefined
+    throw new AppError('User not found', HttpCode.NotFound, `User with this ${id} was not found`)
   }
 
-  updateUser(updatedUser: User): User | undefined {
+  updateUser(updatedUser: User): User {
     for (const user of this.users) {
       if (updatedUser.id === user.id) {
         return updatedUser
       }
     }
-    return undefined
+    throw new AppError('User not found', HttpCode.NotFound, `User with this ${updatedUser.id} was not found`)
   }
 
-  deleteUser(id: number): User | undefined {
+  deleteUser(id: number): User  {
     for (const user of this.users) {
       if (user.id === id) {
         user.deleted = true
         return user
       }
     }
-    return undefined
+    throw new AppError('User not found', HttpCode.NotFound, `User with this ${id} was not found`)
   }
 }

@@ -1,3 +1,5 @@
+import { AppError } from "../error/error";
+import HttpCode from "../httpCode/httpCode.model";
 import TvShow from "./tvShow.model";
 import TvShowServiceInterface from "./tvShow.service.interface";
 
@@ -20,10 +22,10 @@ export class TvShowServiceMock implements TvShowServiceInterface {
     return this.tvShows
   }
 
-  createTvShow(newTvShow: TvShow): TvShow | undefined {
+  createTvShow(newTvShow: TvShow): TvShow {
     for (const tvShow of this.tvShows) {
       if (tvShow.title === newTvShow.title) {
-        return undefined
+        throw new AppError('TvShow already exists', HttpCode.BadRequest, `TvShow with this title: ${newTvShow.title} already exists`)
       }
     }
 
@@ -32,32 +34,32 @@ export class TvShowServiceMock implements TvShowServiceInterface {
     return this.tvShows[this.tvShows.length -1]
   }
 
-  getTvShow(id: number): TvShow | undefined {
+  getTvShow(id: number): TvShow {
     for (const tvShow of this.tvShows) {
       if (tvShow.id === id) {
         return tvShow
       }
     }
-    return undefined
+    throw new AppError('TvShow not found', HttpCode.NotFound, `TvShow with this ${id} was not found`) 
   }
 
-  updateTvShow(updatedTvShow: TvShow): TvShow | undefined {
+  updateTvShow(updatedTvShow: TvShow): TvShow {
     for (const tvShow of this.tvShows) {
       if (updatedTvShow.id === tvShow.id) {
         return updatedTvShow
       }
     }
-    return undefined
+    throw new AppError('TvShow not found', HttpCode.NotFound, `TvShow with this ${updatedTvShow.id} was not found`)
   }
 
-  deleteTvShow(id: number): TvShow | undefined {
+  deleteTvShow(id: number): TvShow {
     for (const tvShow of this.tvShows) {
       if (tvShow.id === id) {
         tvShow.deleted = true
         return tvShow
       }
     }
-    return undefined
+    throw new AppError('TvShow not found', HttpCode.NotFound, `TvShow with this ${id} was not found`)
   }
 
   generateNewTvShow(): number {

@@ -2,8 +2,8 @@ import Movie from "./movie.model";
 
 export default interface MovieServiceInterface {
     getMovies(): Movie[]
-    createMovie(newMovie: Movie): Movie | undefined
-    getMovie(id: number): Movie | undefined
-    updateMovie(updatedMovie: Movie): Movie | undefined
-    deleteMovie(id: number): Movie | undefined
+    createMovie(newMovie: Movie): Movie
+    getMovie(id: number): Movie
+    updateMovie(updatedMovie: Movie): Movie
+    deleteMovie(id: number): Movie 
 }

@@ -2,6 +2,8 @@ import { Request, Response } from "express"
 import { UserServiceMock } from "./user.service.mock"
 import UserServiceInterface from "./user.service.interface"
 import User from "./user.model"
+import HttpCode from "../httpCode/httpCode.model"
+import { AppError } from "../error/error"
 
 export class UserController {
   public static async getUsers(_req: Request, res: Response) {
@@ -17,19 +19,18 @@ export class UserController {
   public static async createUser(req: Request, res: Response) {
     try {
       const userService: UserServiceInterface = new UserServiceMock()
-      let newUser: User | undefined = new User(
+      let newUser: User = new User(
         -1,
         req.body.email,
         req.body.password
       )
       newUser = userService.createUser(newUser)
-      if (newUser instanceof User) {
-        return res.status(201).json(newUser)
-      } else {
-        return res.status(401).send({ message: "Bad Request" })
-      }
+      return res.status(HttpCode.Ok).json(newUser)
     } catch (error) {
-      return res.status(500).send(error.message)
+      if (error instanceof AppError) {
+        return res.status(error.httpCode).send(error.message)
+      }
+      return res.status(HttpCode.InternalServerError).send(error.message)
     }
   }
 
@@ -37,47 +38,48 @@ export class UserController {
     try {
       const userService: UserServiceInterface = new UserServiceMock()
       const user = userService.getUser(+req.params.id)
-      return res.status(201).json(user)
+      return res.status(HttpCode.Ok).json(user)
     } catch (error) {
-      return res.status(500).send(error.message)
+      if (error instanceof AppError) {
+        return res.status(error.httpCode).send(error.message)
+      }
+      return res.status(HttpCode.InternalServerError).send(error.message)
     }
   }
 
   public static async updateUser(req: Request, res: Response) {
     try {
       const userService: UserServiceInterface = new UserServiceMock()
-      let updatedUser: User | undefined = new User(
+      let updatedUser: User = new User(
         +req.params.id,
         req.body.email,
         req.body.password
       )
       updatedUser = userService.updateUser(updatedUser)
-      if (updatedUser instanceof User) {
-        return res.status(201).json(updatedUser)
-      } else {
-        return res.status(401).json({ message: "Bad Request" })
-      }
+      return res.status(HttpCode.Ok).json(updatedUser)
     } catch (error) {
-      return res.status(500).send(error.message)
+      if (error instanceof AppError) {
+        return res.status(error.httpCode).send(error.message)
+      }
+      return res.status(HttpCode.InternalServerError).send(error.message)
     }
   }
 
   public static async deleteUser(req: Request, res: Response) {
     try {
       const userService: UserServiceInterface = new UserServiceMock()
-      let deletedUser: User | undefined = new User(
+      let deletedUser: User = new User(
         +req.params.id,
         req.body.email,
         req.body.password
       )
       deletedUser = userService.deleteUser(+req.params.id)
-      if (deletedUser instanceof User) {
-        return res.status(201).json(deletedUser)
-      } else {
-        return res.status(400).json({ message: "Bad Request" })
-      }
+      return res.status(HttpCode.Ok).json(deletedUser)
     } catch (error) {
-      return res.status(500).send(error.message)
+      if (error instanceof AppError) {
+        return res.status(error.httpCode).send(error.message)
+      }
+      return res.status(HttpCode.InternalServerError).send(error.message)
     }
   }
 }

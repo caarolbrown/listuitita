@@ -5,6 +5,11 @@ import List from "./list.model";
 import MovieServiceInterface from "../movies/movie.service.interface";
 import { MovieServiceMock } from "../movies/movie.service.mock";
 import Movie from "../movies/movie.model";
+import HttpCode from "../httpCode/httpCode.model";
+import { AppError } from "../error/error";
+import { TvShowServiceMock } from "../tvShows/tvShow.service.mock";
+import TvShowServiceInterface from "../tvShows/tvShow.service.interface";
+import TvShow from "../tvShows/tvShow.model";
 
 export class ListController {
   public static async getLists(_req: Request, res: Response) {
@@ -21,27 +26,33 @@ export class ListController {
     try {
       const listService: ListServiceInterface = new ListServiceMock()
       const movieService: MovieServiceInterface = new MovieServiceMock()
+      const tvShowService: TvShowServiceInterface = new TvShowServiceMock()
       const movieIds: number[] = req.body.movie_ids
+      const tvShowIds: number[] = req.body.tvShow_ids
       const movies: Movie[] = []
+      const tvShows: TvShow[] = []
       for (const movieId of movieIds) {
         const movie = movieService.getMovie(movieId)
-        if (movie instanceof Movie) movies.push(movie)
+          movies.push(movie)
       }
-      let newList: List | undefined = new List(
+      for (const tvShowId of tvShowIds) {
+        const tvShow = tvShowService.getTvShow(tvShowId)
+          tvShows.push(tvShow)
+      }
+      let newList: List = new List(
         -1,
         req.body.userId,
         req.body.title,
         movies,
-        req.body.tvShows
+        tvShows
       )
       newList = listService.createList(newList)
-      if (newList instanceof List) {
-        return res.status(201).json(newList)
-      } else {
-        return res.status(400).send({ message: "Bad request" })
-      }
+      return res.status(HttpCode.Ok).json(newList)
     } catch (error) {
-      return res.status(500).send(error.message)
+      if (error instanceof AppError) {
+        return res.status(error.httpCode).send(error.message)
+      }
+      return res.status(HttpCode.InternalServerError).send(error.message)
     }
   }
 
@@ -49,16 +60,19 @@ export class ListController {
     try {
       const listService: ListServiceInterface = new ListServiceMock()
       const list = listService.getList(+req.params.id)
-      return res.status(201).json(list)
+      return res.status(HttpCode.Ok).json(list)
     } catch (error) {
-      return res.status(500).send(error.message)
+      if (error instanceof AppError) {
+        return res.status(error.httpCode).send(error.message)
+      }
+      return res.status(HttpCode.InternalServerError).send(error.message)
     }
   }
 
   public static async updateList(req: Request, res: Response) {
     try {
       const listService: ListServiceInterface = new ListServiceMock()
-      let updatedList: List | undefined = new List(
+      let updatedList: List = new List(
         +req.params.id,
         req.body.userId,
         req.body.title,
@@ -66,20 +80,19 @@ export class ListController {
         req.body.tvShows
       )
       updatedList = listService.updateList(updatedList)
-      if (updatedList instanceof List) {
-        return res.status(201).json(updatedList)
-      } else {
-        return res.status(400).json({ message: "Bad Request" })
-      }
+      return res.status(HttpCode.Ok).json(updatedList)
     } catch (error) {
-      return res.status(500).send(error.message)
+      if (error instanceof AppError) {
+        return res.status(error.httpCode).send(error.message)
+      }
+      return res.status(HttpCode.InternalServerError).send(error.message)
     }
   }
 
   public static async deleteList(req: Request, res: Response) {
     try {
       const listService: ListServiceInterface = new ListServiceMock()
-      let deletedList: List | undefined = new List(
+      let deletedList: List = new List(
         +req.params.id,
         req.body.userId,
         req.body.title,
@@ -87,13 +100,12 @@ export class ListController {
         req.body.tvShows
       )
       deletedList = listService.deleteList(+req.params.id)
-      if (deletedList instanceof List) {
-        return res.status(201).json(deletedList)
-      } else {
-        return res.status(400).json({ message: "Bad Request" })
-      }
+      return res.status(HttpCode.Ok).json(deletedList)
     } catch (error) {
-      return res.status(500).send(error.message)
+      if (error instanceof AppError) {
+        return res.status(error.httpCode).send(error.message)
+      }
+      return res.status(HttpCode.InternalServerError).send(error.message)
     }
   }
 }
