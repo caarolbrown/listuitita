@@ -10,9 +10,12 @@ export class UserController {
     try {
       const userService: UserServiceInterface = new UserServiceMock()
       const users = userService.getUsers()
-      return res.status(201).json(users)
+      return res.status(HttpCode.Ok).json(users)
     } catch (error) {
-      return res.status(500).send(error.message)
+      if (error instanceof AppError) {
+        return res.status(error.httpCode).send(error.message)
+      }
+      return res.status(HttpCode.InternalServerError).send(error.message)
     }
   }
 

@@ -10,9 +10,12 @@ export class TvShowController {
     try {
       const tvShowService: TvShowServiceInterface = new TvShowServiceMock()
       const tvShows = tvShowService.getTvShows()
-      return res.status(201).json(tvShows)
+      return res.status(HttpCode.Ok).json(tvShows)
     } catch (error) {
-      return res.status(500).send(error.message)
+      if (error instanceof AppError) {
+        return res.status(error.httpCode).send(error.message)
+      }
+      return res.status(HttpCode.InternalServerError).send(error.message)
     }
   }
 

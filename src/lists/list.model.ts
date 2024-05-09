@@ -5,16 +5,16 @@ class List {
   id: number
   userId: number
   title: string
-  movie: Movie[]
-  tvShow: TvShow[]
+  movies: Movie[]
+  tvShows: TvShow[]
   deleted: boolean = false
 
-  constructor(id: number, userId: number, title: string, movie: Movie[], tvShow: TvShow[]) {
+  constructor(id: number, userId: number, title: string, movies: Movie[], tvShows: TvShow[]) {
     this.id = id
     this.userId = userId
     this.title = title
-    this.movie = movie
-    this.tvShow = tvShow
+    this.movies = movies
+    this.tvShows = tvShows
   }
 }
 

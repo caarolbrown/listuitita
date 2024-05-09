@@ -40,7 +40,7 @@ export class MovieServiceMock implements MovieServiceInterface {
       if (movie.id === id)
         return movie
     }
-    throw new AppError('Movie not found', HttpCode.NotFound, `Movie with this ${id} was not found`)
+    throw new AppError('Movie not found', HttpCode.NotFound, `Movie with this id: ${id} was not found`)
   }
 
   updateMovie(updatedMovie: Movie): Movie {

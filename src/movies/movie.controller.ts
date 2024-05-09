@@ -10,9 +10,12 @@ export class MovieController {
     try {
       const movieService: MovieServiceInterface = new MovieServiceMock()
       const movies = movieService.getMovies()
-      return res.status(200).json(movies)
+      return res.status(HttpCode.Ok).json(movies)
     } catch (error) {
-      return res.status(500).send(error.message)
+      if (error instanceof AppError) {
+        return res.status(error.httpCode).send(error.message)
+      }
+      return res.status(HttpCode.InternalServerError).send(error.message)
     }
   }
 

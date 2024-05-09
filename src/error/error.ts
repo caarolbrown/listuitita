@@ -1,6 +1,5 @@
 import HttpCode from "../httpCode/httpCode.model"
 
-// centralized error object that derives from Node’s Error
 export class AppError extends Error {
   public readonly name: string
   public readonly httpCode: HttpCode
@@ -8,7 +7,7 @@ export class AppError extends Error {
   constructor(name: string, httpCode: HttpCode, description: string) {
     super(description)
 
-    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
+    Object.setPrototypeOf(this, new.target.prototype)
 
     this.name = name
     this.httpCode = httpCode
