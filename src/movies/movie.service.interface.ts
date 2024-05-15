@@ -1,7 +1,7 @@
 import Movie from "./movie.model";
 
 export default interface MovieServiceInterface {
-    getMovies(): Movie[]
+    getMovies(page: number, limit: number): Movie[]
     createMovie(newMovie: Movie): Movie
     getMovie(id: number): Movie
     updateMovie(updatedMovie: Movie): Movie

@@ -11,16 +11,32 @@ export class MovieServiceMock implements MovieServiceInterface {
     this.movies = []
     this.movies.push(new Movie(
       1,
-      "La sirenita"
+      "la sirenita"
     ))
     this.movies.push(new Movie(
       2,
-      "Cadena perpetua"
+      "cadena perpetua"
+    ))
+    this.movies.push(new Movie(
+      3,
+      "ironman"
+    ))
+    this.movies.push(new Movie(
+      4,
+      "mulan"
+    ))
+    this.movies.push(new Movie(
+      5,
+      "aladin"
+    ))
+    this.movies.push(new Movie(
+      6,
+      "rey leon"
     ))
   }
 
-  getMovies(): Movie[] {
-    return this.movies
+  getMovies(page: number, limit: number): Movie[] {
+    return this.movies.slice(page * limit, (page * limit) + limit)
   }
 
   createMovie(newMovie: Movie): Movie {
