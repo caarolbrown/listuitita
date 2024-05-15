@@ -16,7 +16,8 @@ export class ListServiceMock implements ListServiceInterface {
     movies.push(new Movie(
       1,
       "Peli 1",
-      "animation"
+      "animation", 
+      7
     ))
     let tvShows: TvShow[] = []
     tvShows.push(new TvShow(

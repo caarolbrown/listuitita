@@ -1,6 +1,7 @@
 import { AppError } from "../error/error"
 import HttpCode from "../httpCode/httpCode.model"
 import { MovieFilterBy } from "../models/filter"
+import { SortBy } from "../models/sort"
 import Movie from "./movie.model"
 import MovieServiceInterface from "./movie.service.interface"
 
@@ -13,47 +14,65 @@ export class MovieServiceMock implements MovieServiceInterface {
     this.movies.push(new Movie(
       1,
       "la sirenita",
-      "animation"
+      "animation",
+      7
     ))
     this.movies.push(new Movie(
       2,
       "cadena perpetua",
-      "sad"
+      "sad",
+      10
     ))
     this.movies.push(new Movie(
       3,
       "ironman",
-      "action"
+      "action",
+      4
     ))
     this.movies.push(new Movie(
       4,
       "mulan",
-      "animation"
+      "animation",
+      5
     ))
     this.movies.push(new Movie(
       5,
       "aladin",
-      "animation"
+      "animation", 6
+
     ))
     this.movies.push(new Movie(
       6,
       "rey leon",
-      "animation"
+      "animation",
+      2
     ))
   }
 
-  getMovies(page: number, limit: number, filterBy: MovieFilterBy): Movie[] {
+  getMovies(page: number, limit: number, filterBy: MovieFilterBy, sortBy: SortBy): Movie[] {
     let filteredMovies: Movie[] = this.movies
     if (filterBy.title) {
       filteredMovies = filteredMovies.filter(movie => {
         return movie.title.includes(String(filterBy.title))
       })
     }
-      if (filterBy.genre) {
-        filteredMovies = filteredMovies.filter(movie => {
-          return movie.genre === filterBy.genre
-        })
-      }
+    if (filterBy.genre) {
+      filteredMovies = filteredMovies.filter(movie => {
+        return movie.genre === filterBy.genre
+      })
+    }
+    if (sortBy.score) {
+      filteredMovies = filteredMovies.sort((movieA, movieB) => {
+        if(movieA.score < movieB.score) {
+          return 1
+        }
+        if (movieA.score > movieB.score) {
+          return -1
+        }
+        return 0
+      })
+    }
+
     return filteredMovies.slice(page * limit, (page * limit) + limit)
   }
 

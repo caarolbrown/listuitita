@@ -5,6 +5,7 @@ import Movie from "./movie.model"
 import { AppError } from "../error/error"
 import HttpCode from "../httpCode/httpCode.model"
 import { MovieFilterBy } from "../models/filter"
+import { SortBy } from "../models/sort"
 
 export class MovieController {
   public static async getMovies(req: Request, res: Response) {
@@ -14,9 +15,10 @@ export class MovieController {
       const movieService: MovieServiceInterface = new MovieServiceMock()
       const title: string | undefined = req.query.name ? String(req.query.name) : undefined
       const genre: string | undefined = req.query.genre ? String(req.query.genre) : undefined
+      const score: boolean = req.query.score ? Boolean(req.query.score) : false
       const page: number = req.query.page ? Number(req.query.page) : DEFAULT_MOVIE_PAGE
       const limit: number = req.query.limit ? Number(req.query.limit) : DEFAULT_MOVIE_LIMIT
-      const movies = movieService.getMovies(page, limit, new MovieFilterBy(title, genre))
+      const movies = movieService.getMovies(page, limit, new MovieFilterBy(title, genre), new SortBy(score))
       return res.status(HttpCode.Ok).json(movies)
     } catch (error) {
       if (error instanceof AppError) {
@@ -32,7 +34,8 @@ export class MovieController {
       let newMovie: Movie = new Movie(
         -1,
         req.body.title,
-        req.body.genre
+        req.body.genre,
+        req.body.score
       )
       newMovie = movieService.createMovie(newMovie)
       return res.status(HttpCode.Ok).json(newMovie)
@@ -63,7 +66,8 @@ export class MovieController {
       let updatedMovie: Movie = new Movie(
         +req.params.id,
         req.body.title,
-        req.body.genre
+        req.body.genre,
+        req.body.score
       )
       updatedMovie = movieService.updateMovie(updatedMovie)
       return res.status(HttpCode.Ok).json(updatedMovie)
@@ -81,7 +85,8 @@ export class MovieController {
       let deletedMovie: Movie = new Movie(
         +req.params.id,
         req.body.title,
-        req.body.genre
+        req.body.genre, 
+        req.body.score
       )
       deletedMovie = movieService.deleteMovie(+req.params.id)
       return res.status(HttpCode.Ok).json(deletedMovie)
