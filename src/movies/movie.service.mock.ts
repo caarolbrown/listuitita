@@ -1,5 +1,6 @@
 import { AppError } from "../error/error"
 import HttpCode from "../httpCode/httpCode.model"
+import { FilterBy } from "../models/filter"
 import Movie from "./movie.model"
 import MovieServiceInterface from "./movie.service.interface"
 
@@ -35,8 +36,14 @@ export class MovieServiceMock implements MovieServiceInterface {
     ))
   }
 
-  getMovies(page: number, limit: number): Movie[] {
-    return this.movies.slice(page * limit, (page * limit) + limit)
+  getMovies(page: number, limit: number, filterBy: FilterBy): Movie[] {
+    let filteredMovies: Movie[] = this.movies
+    if (filterBy.name) {
+      filteredMovies = filteredMovies.filter(movie => {
+        return movie.title.includes(String(filterBy.name))
+      })
+    }
+    return filteredMovies.slice(page * limit, (page * limit) + limit)
   }
 
   createMovie(newMovie: Movie): Movie {

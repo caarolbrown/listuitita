@@ -4,6 +4,7 @@ import MovieServiceInterface from "./movie.service.interface"
 import Movie from "./movie.model"
 import { AppError } from "../error/error"
 import HttpCode from "../httpCode/httpCode.model"
+import { FilterBy } from "../models/filter"
 
 export class MovieController {
   public static async getMovies(req: Request, res: Response) {
@@ -11,9 +12,10 @@ export class MovieController {
     const DEFAULT_MOVIE_LIMIT: number = 2
     try {
       const movieService: MovieServiceInterface = new MovieServiceMock()
+      const name: string | undefined = String(req.query.name)
       const page: number = req.query.page ? Number(req.query.page) : DEFAULT_MOVIE_PAGE
       const limit: number = req.query.limit ? Number(req.query.limit) : DEFAULT_MOVIE_LIMIT
-      const movies = movieService.getMovies(page, limit)
+      const movies = movieService.getMovies(page, limit, new FilterBy(name))
       return res.status(HttpCode.Ok).json(movies)
     } catch (error) {
       if (error instanceof AppError) {
