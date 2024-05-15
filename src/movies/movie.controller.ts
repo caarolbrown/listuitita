@@ -6,13 +6,13 @@ import { AppError } from "../error/error"
 import HttpCode from "../httpCode/httpCode.model"
 
 export class MovieController {
-  static DEFAULT_MOVIE_PAGE = 0
-  static DEFAULT_MOVIE_LIMIT = 2
   public static async getMovies(req: Request, res: Response) {
+    const DEFAULT_MOVIE_PAGE: number = 0
+    const DEFAULT_MOVIE_LIMIT: number = 2
     try {
       const movieService: MovieServiceInterface = new MovieServiceMock()
-      const page: number | undefined = req.query.page ? Number(req.query.page) : this.DEFAULT_MOVIE_PAGE
-      const limit: number | undefined = req.query.limit ? Number(req.query.limit) : this.DEFAULT_MOVIE_LIMIT
+      const page: number = req.query.page ? Number(req.query.page) : DEFAULT_MOVIE_PAGE
+      const limit: number = req.query.limit ? Number(req.query.limit) : DEFAULT_MOVIE_LIMIT
       const movies = movieService.getMovies(page, limit)
       return res.status(HttpCode.Ok).json(movies)
     } catch (error) {

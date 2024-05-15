@@ -16,10 +16,26 @@ export class TvShowServiceMock implements TvShowServiceInterface {
           2, 
           "Serie 2"
         ))
+        this.tvShows.push(new TvShow(
+          3, 
+          "Serie 3"
+        ))
+        this.tvShows.push(new TvShow(
+          4, 
+          "Serie 4"
+        ))
+        this.tvShows.push(new TvShow(
+          5, 
+          "Serie 5"
+        ))
+        this.tvShows.push(new TvShow(
+          6, 
+          "Serie 6"
+        ))
     }
 
-  getTvShows(): TvShow[] {
-    return this.tvShows
+  getTvShows(page: number, limit: number): TvShow[] {
+    return this.tvShows.slice(page * limit, (page * limit) + limit)
   }
 
   createTvShow(newTvShow: TvShow): TvShow {

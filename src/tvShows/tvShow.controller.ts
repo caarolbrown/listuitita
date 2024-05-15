@@ -6,10 +6,14 @@ import HttpCode from "../httpCode/httpCode.model"
 import { AppError } from "../error/error"
 
 export class TvShowController {
-  public static async getTvShows(_req: Request, res: Response){
+  public static async getTvShows(req: Request, res: Response){
+    const DEFAULT_TVSHOW_PAGE = 0
+    const DEFAULT_TVSHOW_LIMIT= 3
     try {
       const tvShowService: TvShowServiceInterface = new TvShowServiceMock()
-      const tvShows = tvShowService.getTvShows()
+      const page: number = req.query.page ? Number(req.query.page) : DEFAULT_TVSHOW_PAGE
+      const limit: number = req.query.limit ? Number(req.query.limit) : DEFAULT_TVSHOW_LIMIT
+      const tvShows = tvShowService.getTvShows(page, limit)
       return res.status(HttpCode.Ok).json(tvShows)
     } catch (error) {
       if (error instanceof AppError) {

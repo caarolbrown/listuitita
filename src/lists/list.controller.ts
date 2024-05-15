@@ -12,10 +12,14 @@ import TvShowServiceInterface from "../tvShows/tvShow.service.interface";
 import TvShow from "../tvShows/tvShow.model";
 
 export class ListController {
-  public static async getLists(_req: Request, res: Response) {
+  public static async getLists(req: Request, res: Response) {
+    const DEFAULT_LIST_PAGE = 0
+    const DEFAULT_LIST_LIMIT = 3
     try {
       const listService: ListServiceInterface = new ListServiceMock()
-      const lists = listService.getLists()
+      const page: number = req.query.page ? Number(req.query.page) : DEFAULT_LIST_PAGE
+      const limit: number = req.query.limit ? Number(req.query.limit) : DEFAULT_LIST_LIMIT
+      const lists = listService.getLists(page, limit)
       return res.status(HttpCode.Ok).json(lists)
     } catch (error) {
       if (error instanceof AppError) {

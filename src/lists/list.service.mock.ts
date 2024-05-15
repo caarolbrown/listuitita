@@ -28,10 +28,24 @@ export class ListServiceMock implements ListServiceInterface {
       movies,
       tvShows
     ))
+    this.lists.push(new List(
+      2,
+      1,
+      "Lista 2",
+      movies,
+      tvShows
+    ))
+    this.lists.push(new List(
+      3,
+      1,
+      "Lista 3",
+      movies,
+      tvShows
+    ))
   }
 
-  getLists(): List[] {
-    return this.lists
+  getLists(page: number, limit: number): List[] {
+    return this.lists.slice(page * limit, (page * limit) + limit)
   }
 
   createList(newList: List): List {

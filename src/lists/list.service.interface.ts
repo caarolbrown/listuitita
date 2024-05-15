@@ -1,7 +1,7 @@
 import List from "./list.model";
 
 export default interface ListServiceInterface {
-    getLists(): List[]
+    getLists(page: number, limit: number): List[]
     createList(newList: List): List
     getList(id: number): List
     updateList(updatedList: List): List 
