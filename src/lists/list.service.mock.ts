@@ -4,6 +4,7 @@ import TvShow from "../tvShows/tvShow.model";
 import ListServiceInterface from "./list.service.interface";
 import { AppError } from "../error/error";
 import HttpCode from "../httpCode/httpCode.model";
+import { FilterBy } from "../models/filter";
 
 export class ListServiceMock implements ListServiceInterface {
 
@@ -14,7 +15,8 @@ export class ListServiceMock implements ListServiceInterface {
     let movies: Movie[] = []
     movies.push(new Movie(
       1,
-      "Peli 1"
+      "Peli 1",
+      "animation"
     ))
     let tvShows: TvShow[] = []
     tvShows.push(new TvShow(
@@ -24,28 +26,34 @@ export class ListServiceMock implements ListServiceInterface {
     this.lists.push(new List(
       1,
       1,
-      "Lista 1",
+      "Lista1",
       movies,
       tvShows
     ))
     this.lists.push(new List(
       2,
       1,
-      "Lista 2",
+      "Lista2",
       movies,
       tvShows
     ))
     this.lists.push(new List(
       3,
       1,
-      "Lista 3",
+      "Lista3",
       movies,
       tvShows
     ))
   }
 
-  getLists(page: number, limit: number): List[] {
-    return this.lists.slice(page * limit, (page * limit) + limit)
+  getLists(page: number, limit: number, filterBy: FilterBy): List[] {
+    let filteredList: List[] = this.lists
+    if(filterBy.title) {
+      filteredList = filteredList.filter(list => {
+        return list.title.includes(String(filterBy.title))
+      })
+    }
+    return filteredList.slice(page * limit, (page * limit) + limit)
   }
 
   createList(newList: List): List {

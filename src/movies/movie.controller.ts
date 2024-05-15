@@ -4,7 +4,7 @@ import MovieServiceInterface from "./movie.service.interface"
 import Movie from "./movie.model"
 import { AppError } from "../error/error"
 import HttpCode from "../httpCode/httpCode.model"
-import { FilterBy } from "../models/filter"
+import { MovieFilterBy } from "../models/filter"
 
 export class MovieController {
   public static async getMovies(req: Request, res: Response) {
@@ -12,10 +12,11 @@ export class MovieController {
     const DEFAULT_MOVIE_LIMIT: number = 2
     try {
       const movieService: MovieServiceInterface = new MovieServiceMock()
-      const name: string | undefined = String(req.query.name)
+      const title: string | undefined = req.query.name ? String(req.query.name) : undefined
+      const genre: string | undefined = req.query.genre ? String(req.query.genre) : undefined
       const page: number = req.query.page ? Number(req.query.page) : DEFAULT_MOVIE_PAGE
       const limit: number = req.query.limit ? Number(req.query.limit) : DEFAULT_MOVIE_LIMIT
-      const movies = movieService.getMovies(page, limit, new FilterBy(name))
+      const movies = movieService.getMovies(page, limit, new MovieFilterBy(title, genre))
       return res.status(HttpCode.Ok).json(movies)
     } catch (error) {
       if (error instanceof AppError) {
@@ -30,7 +31,8 @@ export class MovieController {
       const movieService: MovieServiceInterface = new MovieServiceMock()
       let newMovie: Movie = new Movie(
         -1,
-        req.body.title
+        req.body.title,
+        req.body.genre
       )
       newMovie = movieService.createMovie(newMovie)
       return res.status(HttpCode.Ok).json(newMovie)
@@ -60,7 +62,8 @@ export class MovieController {
       const movieService: MovieServiceInterface = new MovieServiceMock()
       let updatedMovie: Movie = new Movie(
         +req.params.id,
-        req.body.title
+        req.body.title,
+        req.body.genre
       )
       updatedMovie = movieService.updateMovie(updatedMovie)
       return res.status(HttpCode.Ok).json(updatedMovie)
@@ -77,7 +80,8 @@ export class MovieController {
       const movieService: MovieServiceInterface = new MovieServiceMock()
       let deletedMovie: Movie = new Movie(
         +req.params.id,
-        req.body.title
+        req.body.title,
+        req.body.genre
       )
       deletedMovie = movieService.deleteMovie(+req.params.id)
       return res.status(HttpCode.Ok).json(deletedMovie)

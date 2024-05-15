@@ -1,6 +1,6 @@
 import { AppError } from "../error/error"
 import HttpCode from "../httpCode/httpCode.model"
-import { FilterBy } from "../models/filter"
+import { MovieFilterBy } from "../models/filter"
 import Movie from "./movie.model"
 import MovieServiceInterface from "./movie.service.interface"
 
@@ -12,37 +12,48 @@ export class MovieServiceMock implements MovieServiceInterface {
     this.movies = []
     this.movies.push(new Movie(
       1,
-      "la sirenita"
+      "la sirenita",
+      "animation"
     ))
     this.movies.push(new Movie(
       2,
-      "cadena perpetua"
+      "cadena perpetua",
+      "sad"
     ))
     this.movies.push(new Movie(
       3,
-      "ironman"
+      "ironman",
+      "action"
     ))
     this.movies.push(new Movie(
       4,
-      "mulan"
+      "mulan",
+      "animation"
     ))
     this.movies.push(new Movie(
       5,
-      "aladin"
+      "aladin",
+      "animation"
     ))
     this.movies.push(new Movie(
       6,
-      "rey leon"
+      "rey leon",
+      "animation"
     ))
   }
 
-  getMovies(page: number, limit: number, filterBy: FilterBy): Movie[] {
+  getMovies(page: number, limit: number, filterBy: MovieFilterBy): Movie[] {
     let filteredMovies: Movie[] = this.movies
-    if (filterBy.name) {
+    if (filterBy.title) {
       filteredMovies = filteredMovies.filter(movie => {
-        return movie.title.includes(String(filterBy.name))
+        return movie.title.includes(String(filterBy.title))
       })
     }
+      if (filterBy.genre) {
+        filteredMovies = filteredMovies.filter(movie => {
+          return movie.genre === filterBy.genre
+        })
+      }
     return filteredMovies.slice(page * limit, (page * limit) + limit)
   }
 

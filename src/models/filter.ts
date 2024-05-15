@@ -1,7 +1,17 @@
 export class FilterBy {
-  name: string | undefined
+  title: string | undefined
 
-  constructor(name: string | undefined) {
-    this.name = name
+  constructor(title: string | undefined) {
+    this.title = title
   }
 }
+
+export class MovieFilterBy extends FilterBy {
+  genre: string | undefined
+
+  constructor(title: string | undefined, genre: string | undefined) {
+    super(title)
+    this.genre = genre
+  }
+}
+

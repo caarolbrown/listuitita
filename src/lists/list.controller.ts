@@ -10,6 +10,7 @@ import { AppError } from "../error/error";
 import { TvShowServiceMock } from "../tvShows/tvShow.service.mock";
 import TvShowServiceInterface from "../tvShows/tvShow.service.interface";
 import TvShow from "../tvShows/tvShow.model";
+import { FilterBy } from "../models/filter";
 
 export class ListController {
   public static async getLists(req: Request, res: Response) {
@@ -17,9 +18,10 @@ export class ListController {
     const DEFAULT_LIST_LIMIT = 3
     try {
       const listService: ListServiceInterface = new ListServiceMock()
+      const title: string | undefined = req.query.title ? String(req.query.title) : undefined
       const page: number = req.query.page ? Number(req.query.page) : DEFAULT_LIST_PAGE
       const limit: number = req.query.limit ? Number(req.query.limit) : DEFAULT_LIST_LIMIT
-      const lists = listService.getLists(page, limit)
+      const lists = listService.getLists(page, limit, new FilterBy(title))
       return res.status(HttpCode.Ok).json(lists)
     } catch (error) {
       if (error instanceof AppError) {

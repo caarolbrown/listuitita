@@ -1,5 +1,6 @@
 import { AppError } from "../error/error";
 import HttpCode from "../httpCode/httpCode.model";
+import { FilterBy } from "../models/filter";
 import TvShow from "./tvShow.model";
 import TvShowServiceInterface from "./tvShow.service.interface";
 
@@ -34,8 +35,14 @@ export class TvShowServiceMock implements TvShowServiceInterface {
         ))
     }
 
-  getTvShows(page: number, limit: number): TvShow[] {
-    return this.tvShows.slice(page * limit, (page * limit) + limit)
+  getTvShows(page: number, limit: number, filterBy: FilterBy): TvShow[] {
+    let filteredTvShows: TvShow[] = this.tvShows
+    if (filterBy.title) {
+      filteredTvShows = filteredTvShows.filter(tvShow => {
+        return tvShow.title.includes(String(filterBy.title))
+      })
+    }
+    return filteredTvShows.slice(page * limit, (page * limit) + limit)
   }
 
   createTvShow(newTvShow: TvShow): TvShow {
