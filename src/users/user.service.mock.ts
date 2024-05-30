@@ -20,11 +20,11 @@ export class UserServiceMock implements UserServiceInterface {
       "password2"
     ))
   }
-  getUsers(): User[] {
+  async getUsers(): Promise<User[]> {
     return this.users
   }
 
-  createUser(newUser: User): User {
+  async createUser(newUser: User): Promise<User> {
     for (const user of this.users) {
       if (user.email === newUser.email) {
         throw new AppError('User already exists', HttpCode.BadRequest, `User with this email: ${newUser.email} already exists`)
@@ -36,7 +36,7 @@ export class UserServiceMock implements UserServiceInterface {
     return this.users[this.users.length -1]
   }
 
-  getUser(id: number): User {
+  async getUser(id: number): Promise<User> {
     for (const user of this.users) {
       if (user.id === id)
         return user
@@ -44,7 +44,7 @@ export class UserServiceMock implements UserServiceInterface {
     throw new AppError('User not found', HttpCode.NotFound, `User with this ${id} was not found`)
   }
 
-  updateUser(updatedUser: User): User {
+  async updateUser(updatedUser: User): Promise<User> {
     for (const user of this.users) {
       if (updatedUser.id === user.id) {
         return updatedUser
@@ -53,7 +53,7 @@ export class UserServiceMock implements UserServiceInterface {
     throw new AppError('User not found', HttpCode.NotFound, `User with this ${updatedUser.id} was not found`)
   }
 
-  deleteUser(id: number): User  {
+  async deleteUser(id: number): Promise<User> {
     for (const user of this.users) {
       if (user.id === id) {
         user.deleted = true
