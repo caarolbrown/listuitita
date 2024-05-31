@@ -11,41 +11,47 @@ export class TvShowServiceMock implements TvShowServiceInterface {
         this.tvShows = []
         this.tvShows.push(new TvShow(
           1, 
-          "Serie 1"
+          "Serie 1",
+          false
         ))
         this.tvShows.push(new TvShow(
           2, 
-          "Serie 2"
+          "Serie 2",
+          false
         ))
         this.tvShows.push(new TvShow(
           3, 
-          "Serie 3"
+          "Serie 3",
+          false
         ))
         this.tvShows.push(new TvShow(
           4, 
-          "Serie 4"
+          "Serie 4",
+          false
         ))
         this.tvShows.push(new TvShow(
           5, 
-          "Serie 5"
+          "Serie 5",
+          false
         ))
         this.tvShows.push(new TvShow(
           6, 
-          "Serie 6"
+          "Serie 6",
+          false
         ))
     }
 
-  getTvShows(page: number, limit: number, filterBy: FilterBy): TvShow[] {
+  async getTvShows(page: number, limit: number, filterBy: FilterBy): Promise<TvShow[]> {
     let filteredTvShows: TvShow[] = this.tvShows
     if (filterBy.title) {
-      filteredTvShows = filteredTvShows.filter(tvShow => {
+      filteredTvShows = await filteredTvShows.filter(tvShow => {
         return tvShow.title.includes(String(filterBy.title))
       })
     }
     return filteredTvShows.slice(page * limit, (page * limit) + limit)
   }
 
-  createTvShow(newTvShow: TvShow): TvShow {
+  async createTvShow(newTvShow: TvShow): Promise<TvShow> {
     for (const tvShow of this.tvShows) {
       if (tvShow.title === newTvShow.title) {
         throw new AppError('TvShow already exists', HttpCode.BadRequest, `TvShow with this title: ${newTvShow.title} already exists`)
@@ -57,7 +63,7 @@ export class TvShowServiceMock implements TvShowServiceInterface {
     return this.tvShows[this.tvShows.length -1]
   }
 
-  getTvShow(id: number): TvShow {
+  async getTvShow(id: number): Promise<TvShow> {
     for (const tvShow of this.tvShows) {
       if (tvShow.id === id) {
         return tvShow
@@ -66,7 +72,7 @@ export class TvShowServiceMock implements TvShowServiceInterface {
     throw new AppError('TvShow not found', HttpCode.NotFound, `TvShow with this ${id} was not found`) 
   }
 
-  updateTvShow(updatedTvShow: TvShow): TvShow {
+  async updateTvShow(updatedTvShow: TvShow): Promise<TvShow> {
     for (const tvShow of this.tvShows) {
       if (updatedTvShow.id === tvShow.id) {
         return updatedTvShow
@@ -75,7 +81,7 @@ export class TvShowServiceMock implements TvShowServiceInterface {
     throw new AppError('TvShow not found', HttpCode.NotFound, `TvShow with this ${updatedTvShow.id} was not found`)
   }
 
-  deleteTvShow(id: number): TvShow {
+  async deleteTvShow(id: number): Promise<TvShow> {
     for (const tvShow of this.tvShows) {
       if (tvShow.id === id) {
         tvShow.deleted = true

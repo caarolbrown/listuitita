@@ -23,7 +23,8 @@ export class ListServiceMock implements ListServiceInterface {
     let tvShows: TvShow[] = []
     tvShows.push(new TvShow(
       1,
-      "TvShow 1"
+      "TvShow 1",
+      false
     ))
     this.lists.push(new List(
       1,

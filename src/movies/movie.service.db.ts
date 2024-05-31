@@ -63,19 +63,9 @@ export class MovieServiceDB implements MovieServiceInterface {
   async updateMovie(updatedMovie: Movie): Promise<Movie> {
     const client = await this.connectDB()
     await client.query(
-      "UPDATE movies SET title = $1, genre = $2, score = $3, deleted = $4"
+      "UPDATE movies SET title = $1, genre = $2, score = $3, deleted = $4", [updatedMovie.title, updatedMovie.genre, updatedMovie.score, updatedMovie.deleted]
     )
-    const result = await client.query(
-      "SELECT * FROM user WHERE id = $1", [updatedMovie.id]
-    )
-    const movie: Movie = new Movie(
-      result.rows[0].get('id'),
-      result.rows[0].get('title'),
-      result.rows[0].get('genre'),
-      result.rows[0].get('score'),
-      result.rows[0].get('deleted')
-    )
-    return movie
+    return updatedMovie
   }
 
   async deleteMovie(id: number): Promise<Movie> {

@@ -3,14 +3,16 @@ import { ListServiceMock } from "./list.service.mock";
 import ListServiceInterface from "./list.service.interface";
 import List from "./list.model";
 import MovieServiceInterface from "../movies/movie.service.interface";
-import { MovieServiceMock } from "../movies/movie.service.mock";
+//import { MovieServiceMock } from "../movies/movie.service.mock";
 import Movie from "../movies/movie.model";
 import HttpCode from "../httpCode/httpCode.model";
 import { AppError } from "../error/error";
-import { TvShowServiceMock } from "../tvShows/tvShow.service.mock";
+//import { TvShowServiceMock } from "../tvShows/tvShow.service.mock";
 import TvShowServiceInterface from "../tvShows/tvShow.service.interface";
 import TvShow from "../tvShows/tvShow.model";
 import { FilterBy } from "../models/filter";
+import { TvShowServiceDB } from "../tvShows/tvShow.service.db";
+import { MovieServiceDB } from "../movies/movie.service.db";
 
 export class ListController {
   public static async getLists(req: Request, res: Response) {
@@ -34,8 +36,8 @@ export class ListController {
   public static async createList(req: Request, res: Response) {
     try {
       const listService: ListServiceInterface = new ListServiceMock()
-      const movieService: MovieServiceInterface = new MovieServiceMock()
-      const tvShowService: TvShowServiceInterface = new TvShowServiceMock()
+      const movieService: MovieServiceInterface = new MovieServiceDB()
+      const tvShowService: TvShowServiceInterface = new TvShowServiceDB()
       const movieIds: number[] = req.body.movie_ids
       const tvShowIds: number[] = req.body.tvShow_ids
       const movies: Movie[] = []
@@ -48,7 +50,7 @@ export class ListController {
       }
       if (tvShowIds !== null && movieIds !== undefined) {
         for (const tvShowId of tvShowIds) {
-          const tvShow = tvShowService.getTvShow(tvShowId)
+          const tvShow = await tvShowService.getTvShow(tvShowId)
           tvShows.push(tvShow)
         }
       }
@@ -85,8 +87,8 @@ export class ListController {
   public static async updateList(req: Request, res: Response) {
     try {
       const listService: ListServiceInterface = new ListServiceMock()
-      const movieService: MovieServiceInterface = new MovieServiceMock()
-      const tvShowService: TvShowServiceInterface = new TvShowServiceMock()
+      const movieService: MovieServiceInterface = new MovieServiceDB()
+      const tvShowService: TvShowServiceInterface = new TvShowServiceDB()
       const movieIds: number[] = req.body.movie_ids
       const tvShowIds: number[] = req.body.tvShow_ids
       const movies: Movie[] = []
@@ -99,7 +101,7 @@ export class ListController {
       }
       if (tvShowIds !== null && tvShowIds !== undefined) {
         for (const tvShowId of tvShowIds) {
-          const tvShow = tvShowService.getTvShow(tvShowId)
+          const tvShow = await tvShowService.getTvShow(tvShowId)
           tvShows.push(tvShow)
         }
       }

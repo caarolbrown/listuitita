@@ -3,9 +3,10 @@ class TvShow {
   title: string
   deleted: boolean = false
 
-  constructor(id: number, title: string) {
+  constructor(id: number, title: string, deleted: boolean) {
     this.id = id
     this.title = title
+    this.deleted = deleted
   }
 }
 

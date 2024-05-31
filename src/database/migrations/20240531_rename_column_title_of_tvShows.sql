@@ -1,0 +1,1 @@
+ALTER TABLE tvShows RENAME COLUMN tile TO title;
