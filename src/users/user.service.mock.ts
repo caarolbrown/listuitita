@@ -12,12 +12,14 @@ export class UserServiceMock implements UserServiceInterface {
     this.users.push(new User(
       1,
       "email@email.com",
-      "password"
+      "password",
+      false
     ))
     this.users.push(new User(
       2, 
       "email2@email.com",
-      "password2"
+      "password2",
+      false
     ))
   }
   async getUsers(): Promise<User[]> {

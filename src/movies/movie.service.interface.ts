@@ -3,9 +3,9 @@ import { SortBy } from "../models/sort";
 import Movie from "./movie.model";
 
 export default interface MovieServiceInterface {
-    getMovies(page: number, limit: number, filterBy: MovieFilterBy, sortBy: SortBy): Movie[]
-    createMovie(newMovie: Movie): Movie
-    getMovie(id: number): Movie
-    updateMovie(updatedMovie: Movie): Movie
-    deleteMovie(id: number): Movie 
+    getMovies(page: number, limit: number, filterBy: MovieFilterBy, sortBy: SortBy): Promise<Movie[]>
+    createMovie(newMovie: Movie): Promise<Movie>
+    getMovie(id: number): Promise<Movie>
+    updateMovie(updatedMovie: Movie): Promise<Movie>
+    deleteMovie(id: number): Promise<Movie> 
 }

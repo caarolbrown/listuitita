@@ -1,0 +1,105 @@
+import { AppError } from "../error/error";
+import HttpCode from "../httpCode/httpCode.model";
+import { MovieFilterBy } from "../models/filter";
+import { SortBy } from "../models/sort";
+import Movie from "./movie.model";
+import MovieServiceInterface from "./movie.service.interface";
+import { connect } from "ts-postgres";
+
+export class MovieServiceDB implements MovieServiceInterface {
+  async getMovies(_page: number, _limit: number, _filterBy: MovieFilterBy, _sortBy: SortBy): Promise<Movie[]> {
+    const client = await this.connectDB()
+    const result = await client.query(
+      "SELECT * FROM movies"
+    )
+    const movies: Movie[] = []
+    for (const row of result.rows) {
+      movies.push(new Movie(
+        row.get('id'),
+        row.get('title'),
+        row.get('genre'),
+        row.get('score'),
+        row.get('deleted')
+      ))
+    }
+    return movies
+  }
+
+  async createMovie(newMovie: Movie): Promise<Movie> {
+    try {
+      const client = await this.connectDB()
+      const result = await client.query(
+        "INSERT INTO movies(title, genre, score) VALUES ($1, $2::varchar::movies_enum, $3) RETURNING id", [newMovie.title, newMovie.genre, newMovie.score]
+      )
+      /*const result = await client.query(
+        "INSERT INTO movies(title, genre, score) VALUES ('peli1234', 'drama', 9.1) RETURNING id"
+      )*/
+      const movie: Movie = new Movie(
+        result.rows[0].get('id'),
+        newMovie.title,
+        newMovie.genre,
+        newMovie.score,
+        false
+      )
+      return movie
+    } catch (error) {
+      throw new AppError(error.message, HttpCode.BadRequest, error.message)
+    }
+  }
+  async getMovie(id: number): Promise<Movie> {
+    const client = await this.connectDB()
+    const result = await client.query(
+      "SELECT * FROM movies WHERE id = $1", [id]
+    )
+    let movie: Movie = new Movie(
+      result.rows[0].get('id'),
+      result.rows[0].get('title'),
+      result.rows[0].get('genre'),
+      result.rows[0].get('score'),
+      result.rows[0].get('deleted')
+    )
+    return movie
+  }
+  async updateMovie(updatedMovie: Movie): Promise<Movie> {
+    const client = await this.connectDB()
+    await client.query(
+      "UPDATE movies SET title = $1, genre = $2, score = $3, deleted = $4"
+    )
+    const result = await client.query(
+      "SELECT * FROM user WHERE id = $1", [updatedMovie.id]
+    )
+    const movie: Movie = new Movie(
+      result.rows[0].get('id'),
+      result.rows[0].get('title'),
+      result.rows[0].get('genre'),
+      result.rows[0].get('score'),
+      result.rows[0].get('deleted')
+    )
+    return movie
+  }
+
+  async deleteMovie(id: number): Promise<Movie> {
+    const client = await this.connectDB()
+    const result = await client.query(
+      "UPDATE movies SET deleted = true WHERE id = $1 RETURNING id, title, genre, score, deleted", [id]
+    )
+    const movie: Movie = new Movie(
+      result.rows[0].get('id'),
+      result.rows[0].get('title'),
+      result.rows[0].get('genre'),
+      result.rows[0].get('score'),
+      result.rows[0].get('deleted')
+    )
+    return movie
+  }
+
+  private async connectDB() {
+    return await connect({
+      "host": process.env.DB_HOST,
+      "port": Number(process.env.DB_PORT),
+      "user": process.env.DB_USER,
+      "database": process.env.DB_DATABASE,
+      "password": process.env.DB_PASSWORD
+    })
+  }
+}

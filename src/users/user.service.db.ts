@@ -13,7 +13,8 @@ export class UserServiceDB implements UserServiceInterface {
       users.push(new User(
         row.get('id'),
         row.get('email'),
-        row.get('password')
+        row.get('password'),
+        row.get('deleted')
       ))
     }
     return users
@@ -27,7 +28,8 @@ export class UserServiceDB implements UserServiceInterface {
     const user: User = new User(
       result.rows[0].get('id'),
       newUser.email,
-      newUser.password
+      newUser.password,
+      newUser.deleted
     )
     return user
   }
@@ -40,7 +42,8 @@ export class UserServiceDB implements UserServiceInterface {
     let user: User = new User(
       result.rows[0].get('id'),
       result.rows[0].get('email'),
-      result.rows[0].get('password')
+      result.rows[0].get('password'),
+      result.rows[0].get('deleted')
     )
     return user
   }
@@ -56,7 +59,8 @@ export class UserServiceDB implements UserServiceInterface {
     const user: User = new User(
       result.rows[0].get('id'),
       result.rows[0].get('email'),
-      result.rows[0].get('password')
+      result.rows[0].get('password'),
+      result.rows[0].get('deleted')
     )
     return user
   }
@@ -64,12 +68,13 @@ export class UserServiceDB implements UserServiceInterface {
   async deleteUser(id: number): Promise<User> {
     const client = await this.connectDB()
     const result = await client.query(
-      "DELETE FROM users WHERE id = $1 RETURNING id, email, password", [id]
+      "UPDATE users SET deleted = true WHERE id = $1 RETURNING id, email, password, deleted", [id]
     )
     const user: User = new User(
       result.rows[0].get('id'),
       result.rows[0].get('email'),
-      result.rows[0].get('password')
+      result.rows[0].get('password'),
+      result.rows[0].get('deleted')
     )
     return user
   }

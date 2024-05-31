@@ -42,7 +42,7 @@ export class ListController {
       const tvShows: TvShow[] = []
       if (movieIds !== null && movieIds !== undefined) {
         for (const movieId of movieIds) {
-          const movie = movieService.getMovie(movieId)
+          const movie = await movieService.getMovie(movieId)
           movies.push(movie)
         }
       }
@@ -93,7 +93,7 @@ export class ListController {
       const tvShows: TvShow[] = []
       if (movieIds !== null && movieIds !== undefined) {
         for (const movieId of movieIds) {
-          const movie = movieService.getMovie(movieId)
+          const movie = await movieService.getMovie(movieId)
           movies.push(movie)
         }
       }

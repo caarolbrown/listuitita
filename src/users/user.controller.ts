@@ -26,7 +26,8 @@ export class UserController {
       let newUser: User = new User(
         -1,
         req.body.email,
-        req.body.password
+        req.body.password,
+        false
       )
       newUser = await userService.createUser(newUser)
       return res.status(HttpCode.Ok).json(newUser)
@@ -57,7 +58,8 @@ export class UserController {
       let updatedUser: User = new User(
         +req.params.id,
         req.body.email,
-        req.body.password
+        req.body.password,
+        req.body.deleted
       )
       updatedUser = await userService.updateUser(updatedUser)
       return res.status(HttpCode.Ok).json(updatedUser)
@@ -75,7 +77,8 @@ export class UserController {
       let deletedUser: User = new User(
         +req.params.id,
         req.body.email,
-        req.body.password
+        req.body.password,
+        req.body.deleted
       )
       deletedUser = await userService.deleteUser(+req.params.id)
       return res.status(HttpCode.Ok).json(deletedUser)
