@@ -3,12 +3,12 @@ import HttpCode from "../httpCode/httpCode.model";
 
 function listValidateBody(req: Request, res: Response, next: NextFunction) {
   const body = req.body
-  const userId = body.userId
+  const id_user = body.id_user
   const title = body.title
   const movieIds = body.movie_ids
   const tvShowIds = body.tvShow_ids
 
-  if (userId === null || userId === undefined){
+  if (id_user === null || id_user === undefined){
     return res.status(HttpCode.BadRequest).send("UserId is missing")
   }
   if (title === null || title === undefined) {

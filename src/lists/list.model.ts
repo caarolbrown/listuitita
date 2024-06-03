@@ -3,18 +3,17 @@ import TvShow from "../tvShows/tvShow.model"
 
 class List {
   id: number
-  userId: number
+  id_user: number
   title: string
-  movies: Movie[]
-  tvShows: TvShow[]
+  movies: Movie[] = []
+  tvShows: TvShow[] = []
   deleted: boolean = false
 
-  constructor(id: number, userId: number, title: string, movies: Movie[], tvShows: TvShow[]) {
+  constructor(id: number, id_user: number, title: string, deleted: boolean) {
     this.id = id
-    this.userId = userId
+    this.id_user = id_user
     this.title = title
-    this.movies = movies
-    this.tvShows = tvShows
+    this.deleted = deleted
   }
 }
 

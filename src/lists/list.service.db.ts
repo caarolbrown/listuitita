@@ -1,91 +1,95 @@
 import { AppError } from "../error/error";
 import HttpCode from "../httpCode/httpCode.model";
 import { FilterBy } from "../models/filter";
-import TvShow from "./tvShow.model";
-import TvShowServiceInterface from "./tvShow.service.interface";
+import List from "./list.model";
+import ListServiceInterface from "./list.service.interface";
 import { connect } from "ts-postgres";
 
-export class TvShowServiceDB implements TvShowServiceInterface {
-  async getTvShows(_page: number, _limit: number, _filterBy: FilterBy): Promise<TvShow[]> {
-    try {
+export class ListServiceDB implements ListServiceInterface {
+  async getLists(_page: number, _limit: number, _filterBy: FilterBy): Promise<List[]> {
+    try {      
       const client = await this.connectDB()
       const result = await client.query(
-        "SELECT * FROM tvShows"
+        "SELECT id, id_user, title, deleted FROM lists"
       )
-      const tvShow: TvShow[] = []
-      for (const row of result.rows) {
-        tvShow.push(new TvShow(
+      const lists: List[] = []
+      for (const row of result.rows){
+        lists.push(new List(
           row.get('id'),
+          row.get('id_user'),
           row.get('title'),
           row.get('deleted')
         ))
       }
-      return tvShow
+      return lists
     } catch (error) {
       throw new AppError(error.message, HttpCode.BadRequest, error.message)
     }
   }
 
-  async createTvShow(newTvShow: TvShow): Promise<TvShow> {
+  async createList(newList: List): Promise<List> {
     try {      
       const client = await this.connectDB()
       const result = await client.query(
-        "INSERT INTO tvShows (title) VALUES ($1) RETURNING id", [newTvShow.title]
+        "INSERT INTO lists(id_user, title, deleted) VALUES ($1, $2, $3) RETURNING id", [newList.id_user, newList.title, newList.deleted]
       )
-      const tvShow: TvShow = new TvShow(
+      const list: List = new List(
         result.rows[0].get('id'),
-        newTvShow.title,
-        newTvShow.deleted
+        newList.id_user,
+        newList.title,
+        false
       )
-      return tvShow
+      return list
     } catch (error) {
       throw new AppError(error.message, HttpCode.BadRequest, error.message)
     }
   }
 
-  async getTvShow(id: number): Promise<TvShow> {
-    try {
+  async getList(id: number): Promise<List> {
+    try {      
       const client = await this.connectDB()
       const result = await client.query(
-        "SELECT * FROM tvShows WHERE id = $1", [id]
+        "SELECT * FROM lists WHERE id = $1", [id]
       )
-      let tvShow: TvShow = new TvShow(
+      const list: List = new List(
         result.rows[0].get('id'),
+        result.rows[0].get('id_user'),
         result.rows[0].get('title'),
-        result.rows[0].get('deleted')
+        false
       )
-      return tvShow
+      return list
     } catch (error) {
       throw new AppError(error.message, HttpCode.BadRequest, error.message)
     }
+    
   }
-
-  async updateTvShow(updatedTvShow: TvShow): Promise<TvShow> {
+  async updateList(updatedList: List): Promise<List> {
     try {
       const client = await this.connectDB()
       await client.query(
-        "UPDATE tvShows SET title = $1, deleted = $2::boolean WHERE id = $3", [updatedTvShow.title, updatedTvShow.deleted, updatedTvShow.id]
+        "UPDATE lists SET id_user = $1, title = $2, deleted = $3 WHERE id= $4", 
+        [updatedList.id_user, updatedList.title, updatedList.deleted, updatedList.id]
       )
-      return updatedTvShow
+      return updatedList
     } catch (error) {
       throw new AppError(error.message, HttpCode.BadRequest, error.message)
     }
   }
-
-  async deleteTvShow(id: number): Promise<TvShow> {
+  async deleteList(id: number): Promise<List> {
     try {
       const client = await this.connectDB()
       const result = await client.query(
-        "UPDATE tvShows SET deleted = true WHERE id = $1 RETURNING id, title, deleted", [id]
-      )
-      const tvShow: TvShow = new TvShow(
+        "UPDATE lists SET deleted = true WHERE id = $1 RETURNING id, id_user, title, deleted", [id]
+      ) 
+      const list: List = new List(
         result.rows[0].get('id'),
+        result.rows[0].get('id_user'),
         result.rows[0].get('title'),
-        result.rows[0].get('deleted'),
+        result.rows[0].get('deleted')
       )
-      return tvShow
+      return list
     } catch (error) {
-      throw new AppError(error.message, HttpCode.BadRequest, error.message)
+      throw new AppError(error.message, HttpCode.BadRequest, error.message);
     }
   }
 
