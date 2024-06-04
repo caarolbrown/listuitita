@@ -93,6 +93,17 @@ export class ListServiceDB implements ListServiceInterface {
     }
   }
 
+  async addMovieToList(idList: number, movie_ids: number[]) {
+    try {
+      const client = await this.connectDB()
+      await client.query(
+        "INSERT INTO lists_movies(id_list, id_movie) VALUES ($1, $2)", [idList, movie_ids]
+      )
+    } catch (error) {
+      throw new AppError(error.message, HttpCode.BadRequest, error.message)
+    }
+  }
+
   private async connectDB() {
     return await connect({
       "host": process.env.DB_HOST,

@@ -139,4 +139,15 @@ export class ListController {
       return res.status(HttpCode.InternalServerError).send(error.message)
     }
   }
+
+  public static async addMovieToList(req: Request, res: Response) {
+    try {
+      const listService: ListServiceDB = new ListServiceDB()
+      const movieIds: number[] = req.body.movie_ids
+      const movieAdded = await listService.addMovieToList(+req.params.id, movieIds)
+      return res.status(HttpCode.Ok).json(movieAdded)
+    } catch (error) {
+      return res.status(HttpCode.BadRequest).send(error.message)
+    }
+  }
 }
