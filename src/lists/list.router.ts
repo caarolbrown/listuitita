@@ -9,6 +9,7 @@ router.post("/", listValidateBody, ListController.createList)
 router.get("/:id", ListController.getList)
 router.put("/:id", listValidateBody, ListController.updateList)
 router.delete("/:id", ListController.deleteList)
-router.post("/:id/movies", ListController.addMovieToList)
+router.post("/:id/movies", ListController.addMoviesToList)
+router.post("/:id/tvShows", ListController.addTvShowToList)
 
 export default router

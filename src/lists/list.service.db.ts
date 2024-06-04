@@ -93,12 +93,32 @@ export class ListServiceDB implements ListServiceInterface {
     }
   }
 
-  async addMovieToList(idList: number, movie_ids: number[]) {
+  async addMoviesToList(idList: number, movieIds: number[]) {
     try {
       const client = await this.connectDB()
-      await client.query(
-        "INSERT INTO lists_movies(id_list, id_movie) VALUES ($1, $2)", [idList, movie_ids]
-      )
+      for (const movieId of movieIds) {
+        await client.query(
+          "INSERT INTO lists_movies(id_list, id_movie) VALUES ($1, $2)", [idList, movieId]
+        )
+      }
+      if (movieIds.length === 1) {
+        return (`This movieId ${movieIds} has been added to this list: ${idList}`)
+      } else {
+        return (`These movieIds ${movieIds} have been added to this list: ${idList}`)
+      }
+    } catch (error) {
+      throw new AppError(error.message, HttpCode.InternalServerError, error.message)
+    }
+  }
+
+  async addTvShowToList(idList: number, tvShows: number[]) {
+    try {
+      const client = await this.connectDB()
+      for (const tvShow of tvShows) {
+        await client.query(
+          "INSERT INTO lists_tvshows(id_list, id_tvshow) VALUES ($1, $2)", [idList, tvShow]
+        )
+      }
     } catch (error) {
       throw new AppError(error.message, HttpCode.BadRequest, error.message)
     }
