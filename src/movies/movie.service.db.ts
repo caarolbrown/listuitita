@@ -7,11 +7,25 @@ import MovieServiceInterface from "./movie.service.interface";
 import { connect } from "ts-postgres";
 
 export class MovieServiceDB implements MovieServiceInterface {
-  async getMovies(_page: number, _limit: number, _filterBy: MovieFilterBy, _sortBy: SortBy): Promise<Movie[]> {
+  async getMovies(_page: number, _limit: number, filterBy: MovieFilterBy, _sortBy: SortBy): Promise<Movie[]> {
     try {
       const client = await this.connectDB()
+      let sqlSelect = "SELECT * FROM movies"
+      let sqlParams = []
+      if (filterBy.title) {
+        sqlSelect += " WHERE title LIKE $1"
+        sqlParams.push(`%${filterBy.title}%`)
+      }
+      if (filterBy.genre) {
+        if (sqlSelect.includes("WHERE")) {
+          sqlSelect += " AND genre = $2 AND genre IS NOT NULL"
+        } else {
+          sqlSelect += " WHERE genre = $1 AND genre IS NOT NULL"
+        }
+        sqlParams.push(filterBy.genre)
+      }
       const result = await client.query(
-        "SELECT * FROM movies"
+        sqlSelect, sqlParams
       )
       const movies: Movie[] = []
       for (const row of result.rows) {
@@ -33,7 +47,7 @@ export class MovieServiceDB implements MovieServiceInterface {
     try {
       const client = await this.connectDB()
       const result = await client.query(
-        "INSERT INTO movies(title, genre, score) VALUES ($1, $2::varchar::movies_enum, $3) RETURNING id", [newMovie.title, newMovie.genre, newMovie.score]
+        "INSERT INTO movies(title, genre, score) VALUES ($1, $2, $3) RETURNING id", [newMovie.title, newMovie.genre.toLocaleLowerCase(), newMovie.score]
       )
       /*const result = await client.query(
         "INSERT INTO movies(title, genre, score) VALUES ('peli1234', 'drama', 9.1) RETURNING id"

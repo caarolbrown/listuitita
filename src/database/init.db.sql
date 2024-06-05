@@ -4,14 +4,10 @@ CREATE TABLE IF NOT EXISTS users(
     password VARCHAR(50) NOT NULL UNIQUE
 );
 
-CREATE TYPE movies_enum
-AS
-ENUM('action', 'comedy', 'drama', 'fantasy', 'horror', 'mystery', 'romance', 'thriller');
-
 CREATE TABLE IF NOT EXISTS movies(
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL UNIQUE, 
-    genre movies_enum NOT NULL,
+    genre VARCHAR(255) NOT NULL,
     score FLOAT NOT NULL
 );
 

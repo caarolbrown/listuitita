@@ -14,7 +14,7 @@ export class MovieController {
     const DEFAULT_MOVIE_LIMIT: number = 2
     try {
       const movieService: MovieServiceInterface = new MovieServiceDB()
-      const title: string | undefined = req.query.name ? String(req.query.name) : undefined
+      const title: string | undefined = req.query.title ? String(req.query.title) : undefined
       const genre: string | undefined = req.query.genre ? String(req.query.genre) : undefined
       const score: boolean = req.query.score ? Boolean(req.query.score) : false
       const page: number = req.query.page ? Number(req.query.page) : DEFAULT_MOVIE_PAGE

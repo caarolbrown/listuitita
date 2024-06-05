@@ -6,11 +6,17 @@ import TvShowServiceInterface from "./tvShow.service.interface";
 import { connect } from "ts-postgres";
 
 export class TvShowServiceDB implements TvShowServiceInterface {
-  async getTvShows(_page: number, _limit: number, _filterBy: FilterBy): Promise<TvShow[]> {
+  async getTvShows(_page: number, _limit: number, filterBy: FilterBy): Promise<TvShow[]> {
     try {
       const client = await this.connectDB()
+      let sqlSelect = "SELECT * FROM tvShows"
+      let sqlParams = []
+      if (filterBy.title) {
+        sqlSelect += " WHERE title LIKE $1"
+        sqlParams.push(`%${filterBy.title}%`)
+      }
       const result = await client.query(
-        "SELECT * FROM tvShows"
+        sqlSelect, sqlParams
       )
       const tvShow: TvShow[] = []
       for (const row of result.rows) {
@@ -27,7 +33,7 @@ export class TvShowServiceDB implements TvShowServiceInterface {
   }
 
   async createTvShow(newTvShow: TvShow): Promise<TvShow> {
-    try {      
+    try {
       const client = await this.connectDB()
       const result = await client.query(
         "INSERT INTO tvShows (title) VALUES ($1) RETURNING id", [newTvShow.title]

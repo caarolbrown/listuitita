@@ -6,11 +6,17 @@ import ListServiceInterface from "./list.service.interface";
 import { connect } from "ts-postgres";
 
 export class ListServiceDB implements ListServiceInterface {
-  async getLists(_page: number, _limit: number, _filterBy: FilterBy): Promise<List[]> {
+  async getLists(_page: number, _limit: number, filterBy: FilterBy): Promise<List[]> {
     try {
       const client = await this.connectDB()
+      let sqlSelect = "SELECT id, id_user, title, deleted FROM lists"
+      let sqlParams = []
+      if (filterBy.title){
+        sqlSelect += " WHERE title LIKE $1"
+        sqlParams.push(filterBy.title)
+      } 
       const result = await client.query(
-        "SELECT id, id_user, title, deleted FROM lists"
+        sqlSelect, sqlParams
       )
       const lists: List[] = []
       for (const row of result.rows) {
