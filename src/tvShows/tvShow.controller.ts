@@ -6,6 +6,7 @@ import HttpCode from "../httpCode/httpCode.model"
 import { AppError } from "../error/error"
 import { FilterBy } from "../models/filter"
 import { TvShowServiceDB } from "./tvShow.service.db"
+import { SortBy } from "../models/sort"
 
 export class TvShowController {
   public static async getTvShows(req: Request, res: Response){
@@ -16,7 +17,9 @@ export class TvShowController {
       const title: string | undefined = req.query.title ? String(req.query.title) : undefined
       const page: number = req.query.page ? Number(req.query.page) : DEFAULT_TVSHOW_PAGE
       const limit: number = req.query.limit ? Number(req.query.limit) : DEFAULT_TVSHOW_LIMIT
-      const tvShows = await tvShowService.getTvShows(page, limit, new FilterBy(title))
+      const score: boolean = req.query.score === 'true' ? true : false
+      const orderBy: boolean = req.query.orderBy === 'true' ? true : false
+      const tvShows = await tvShowService.getTvShows(page, limit, new FilterBy(title), new SortBy(score, orderBy))
       return res.status(HttpCode.Ok).json(tvShows)
     } catch (error) {
       if (error instanceof AppError) {
@@ -32,6 +35,7 @@ export class TvShowController {
       let newTvShow: TvShow = new TvShow(
         -1, 
         req.body.title,
+        req.body.score,
         false
       )
       newTvShow = await tvShowService.createTvShow(newTvShow)
@@ -63,6 +67,7 @@ export class TvShowController {
       let updatedTvShow: TvShow = new TvShow (
         +req.params.id,
         req.body.title,
+        req.body.score, 
         req.body.deleted
       )
       updatedTvShow = await tvShowService.updateTvShow(updatedTvShow)
@@ -81,6 +86,7 @@ export class TvShowController {
       let deletedTvShow: TvShow = new TvShow(
         +req.params.id,
         req.body.title,
+        req.body.score, 
         req.body.deleted
       )
       deletedTvShow = await tvShowService.deleteTvShow(+req.params.id)

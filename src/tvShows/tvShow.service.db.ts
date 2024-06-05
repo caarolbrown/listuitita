@@ -1,12 +1,13 @@
 import { AppError } from "../error/error";
 import HttpCode from "../httpCode/httpCode.model";
 import { FilterBy } from "../models/filter";
+import { SortBy } from "../models/sort";
 import TvShow from "./tvShow.model";
 import TvShowServiceInterface from "./tvShow.service.interface";
 import { connect } from "ts-postgres";
 
 export class TvShowServiceDB implements TvShowServiceInterface {
-  async getTvShows(_page: number, _limit: number, filterBy: FilterBy): Promise<TvShow[]> {
+  async getTvShows(_page: number, _limit: number, filterBy: FilterBy, sortBy: SortBy): Promise<TvShow[]> {
     try {
       const client = await this.connectDB()
       let sqlSelect = "SELECT * FROM tvShows"
@@ -14,6 +15,13 @@ export class TvShowServiceDB implements TvShowServiceInterface {
       if (filterBy.title) {
         sqlSelect += " WHERE title LIKE $1"
         sqlParams.push(`%${filterBy.title}%`)
+      }
+      if (sortBy.score) {
+        if (sortBy.orderBy) {
+          sqlSelect += " ORDER BY score DESC"
+        } else {
+          sqlSelect += " ORDER BY score ASC"
+        }
       }
       const result = await client.query(
         sqlSelect, sqlParams
@@ -23,6 +31,7 @@ export class TvShowServiceDB implements TvShowServiceInterface {
         tvShow.push(new TvShow(
           row.get('id'),
           row.get('title'),
+          row.get('score'),
           row.get('deleted')
         ))
       }
@@ -36,12 +45,13 @@ export class TvShowServiceDB implements TvShowServiceInterface {
     try {
       const client = await this.connectDB()
       const result = await client.query(
-        "INSERT INTO tvShows (title) VALUES ($1) RETURNING id", [newTvShow.title]
+        "INSERT INTO tvShows (title, score) VALUES ($1, $2) RETURNING id", [newTvShow.title, newTvShow.score]
       )
       const tvShow: TvShow = new TvShow(
         result.rows[0].get('id'),
         newTvShow.title,
-        newTvShow.deleted
+        newTvShow.score,
+        false
       )
       return tvShow
     } catch (error) {
@@ -58,6 +68,7 @@ export class TvShowServiceDB implements TvShowServiceInterface {
       let tvShow: TvShow = new TvShow(
         result.rows[0].get('id'),
         result.rows[0].get('title'),
+        result.rows[0].get('score'),
         result.rows[0].get('deleted')
       )
       return tvShow
@@ -87,6 +98,7 @@ export class TvShowServiceDB implements TvShowServiceInterface {
       const tvShow: TvShow = new TvShow(
         result.rows[0].get('id'),
         result.rows[0].get('title'),
+        result.rows[0].get('score'),
         result.rows[0].get('deleted'),
       )
       return tvShow

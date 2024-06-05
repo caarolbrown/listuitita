@@ -12,31 +12,37 @@ export class TvShowServiceMock implements TvShowServiceInterface {
         this.tvShows.push(new TvShow(
           1, 
           "Serie 1",
+          9,
           false
         ))
         this.tvShows.push(new TvShow(
           2, 
           "Serie 2",
+          7,
           false
         ))
         this.tvShows.push(new TvShow(
           3, 
           "Serie 3",
+          5,
           false
         ))
         this.tvShows.push(new TvShow(
           4, 
           "Serie 4",
+          8,
           false
         ))
         this.tvShows.push(new TvShow(
           5, 
           "Serie 5",
+          1,
           false
         ))
         this.tvShows.push(new TvShow(
           6, 
           "Serie 6",
+          10,
           false
         ))
     }

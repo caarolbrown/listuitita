@@ -1,0 +1,1 @@
+ALTER TABLE tvSHows ADD COLUMN score float;
