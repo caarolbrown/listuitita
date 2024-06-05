@@ -16,10 +16,13 @@ export class MovieController {
       const movieService: MovieServiceInterface = new MovieServiceDB()
       const title: string | undefined = req.query.title ? String(req.query.title) : undefined
       const genre: string | undefined = req.query.genre ? String(req.query.genre) : undefined
-      const score: boolean = req.query.score ? Boolean(req.query.score) : false
+      const score: boolean = req.query.score === 'true' ? true : false 
+      const orderBy: boolean = req.query.score === 'true' ? true : false
+      //const score: boolean = req.query.score ? Boolean(req.query.score).valueOf() : false
+      //const orderBy: boolean = req.query.orderBy ? Boolean(req.query.orderBy).valueOf() : false
       const page: number = req.query.page ? Number(req.query.page) : DEFAULT_MOVIE_PAGE
       const limit: number = req.query.limit ? Number(req.query.limit) : DEFAULT_MOVIE_LIMIT
-      const movies = await movieService.getMovies(page, limit, new MovieFilterBy(title, genre), new SortBy(score))
+      const movies = await movieService.getMovies(page, limit, new MovieFilterBy(title, genre), new SortBy(score, orderBy))
       return res.status(HttpCode.Ok).json(movies)
     } catch (error) {
       if (error instanceof AppError) {

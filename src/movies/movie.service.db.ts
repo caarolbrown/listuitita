@@ -7,7 +7,7 @@ import MovieServiceInterface from "./movie.service.interface";
 import { connect } from "ts-postgres";
 
 export class MovieServiceDB implements MovieServiceInterface {
-  async getMovies(_page: number, _limit: number, filterBy: MovieFilterBy, _sortBy: SortBy): Promise<Movie[]> {
+  async getMovies(_page: number, _limit: number, filterBy: MovieFilterBy, sortBy: SortBy): Promise<Movie[]> {
     try {
       const client = await this.connectDB()
       let sqlSelect = "SELECT * FROM movies"
@@ -23,6 +23,13 @@ export class MovieServiceDB implements MovieServiceInterface {
           sqlSelect += " WHERE genre = $1 AND genre IS NOT NULL"
         }
         sqlParams.push(filterBy.genre)
+      }
+      if(sortBy.score) {
+        if (sortBy.orderBy) {
+          sqlSelect += " ORDER BY score DESC"
+        } else {
+          sqlSelect += " ORDER BY score ASC"
+        }
       }
       const result = await client.query(
         sqlSelect, sqlParams
