@@ -7,13 +7,13 @@ import TvShowServiceInterface from "./tvShow.service.interface";
 import { connect } from "ts-postgres";
 
 export class TvShowServiceDB implements TvShowServiceInterface {
-  async getTvShows(_page: number, _limit: number, filterBy: FilterBy, sortBy: SortBy): Promise<TvShow[]> {
+  async getTvShows(_page: number, limit: number, filterBy: FilterBy, sortBy: SortBy): Promise<TvShow[]> {
     try {
       const client = await this.connectDB()
       let sqlSelect = "SELECT * FROM tvShows"
       let sqlParams = []
       if (filterBy.title) {
-        sqlSelect += " WHERE title LIKE $1"
+        sqlSelect += " WHERE title LIKE $" + (sqlParams.length + 1)
         sqlParams.push(`%${filterBy.title}%`)
       }
       if (sortBy.score) {
@@ -23,9 +23,12 @@ export class TvShowServiceDB implements TvShowServiceInterface {
           sqlSelect += " ORDER BY score ASC"
         }
       }
+      sqlSelect += " LIMIT $" + (sqlParams.length + 1)
+      sqlParams.push(limit)
       const result = await client.query(
         sqlSelect, sqlParams
       )
+
       const tvShow: TvShow[] = []
       for (const row of result.rows) {
         tvShow.push(new TvShow(
