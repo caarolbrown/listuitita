@@ -7,7 +7,7 @@ import MovieServiceInterface from "./movie.service.interface";
 import { connect } from "ts-postgres";
 
 export class MovieServiceDB implements MovieServiceInterface {
-  async getMovies(_page: number, limit: number, filterBy: MovieFilterBy, sortBy: SortBy): Promise<Movie[]> {
+  async getMovies(page: number, limit: number, filterBy: MovieFilterBy, sortBy: SortBy): Promise<Movie[]> {
     try {
       const client = await this.connectDB()
       let sqlSelect = "SELECT * FROM movies"
@@ -31,8 +31,8 @@ export class MovieServiceDB implements MovieServiceInterface {
           sqlSelect += " ORDER BY score ASC"
         }
       }
-      sqlSelect += " LIMIT $" + (sqlParams.length + 1)
-      sqlParams.push(limit)
+      sqlSelect += " LIMIT $" + (sqlParams.length + 1) + " OFFSET $" + (sqlParams.length + 2)
+      sqlParams.push(limit, (limit * (page - 1)))
       const result = await client.query(
         sqlSelect, sqlParams
       )

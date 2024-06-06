@@ -7,7 +7,7 @@ import TvShowServiceInterface from "./tvShow.service.interface";
 import { connect } from "ts-postgres";
 
 export class TvShowServiceDB implements TvShowServiceInterface {
-  async getTvShows(_page: number, limit: number, filterBy: FilterBy, sortBy: SortBy): Promise<TvShow[]> {
+  async getTvShows(page: number, limit: number, filterBy: FilterBy, sortBy: SortBy): Promise<TvShow[]> {
     try {
       const client = await this.connectDB()
       let sqlSelect = "SELECT * FROM tvShows"
@@ -23,8 +23,8 @@ export class TvShowServiceDB implements TvShowServiceInterface {
           sqlSelect += " ORDER BY score ASC"
         }
       }
-      sqlSelect += " LIMIT $" + (sqlParams.length + 1)
-      sqlParams.push(limit)
+      sqlSelect += " LIMIT $" + (sqlParams.length + 1) + " OFFSET $" + (sqlParams.length + 2)
+      sqlParams.push(limit, (limit * (page -1)))
       const result = await client.query(
         sqlSelect, sqlParams
       )
