@@ -9,10 +9,12 @@ class List {
   tvShows: TvShow[] = []
   deleted: boolean = false
 
-  constructor(id: number, id_user: number, title: string, deleted: boolean) {
+  constructor(id: number, id_user: number, title: string, movies: Movie[], tvShows: TvShow[], deleted: boolean) {
     this.id = id
     this.id_user = id_user
     this.title = title
+    this.movies = movies
+    this.tvShows = tvShows
     this.deleted = deleted
   }
 }

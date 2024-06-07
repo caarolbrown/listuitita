@@ -1,6 +1,8 @@
 import { AppError } from "../error/error";
 import HttpCode from "../httpCode/httpCode.model";
 import { FilterBy } from "../models/filter";
+import Movie from "../movies/movie.model";
+import TvShow from "../tvShows/tvShow.model";
 import List from "./list.model";
 import ListServiceInterface from "./list.service.interface";
 import { connect } from "ts-postgres";
@@ -11,12 +13,12 @@ export class ListServiceDB implements ListServiceInterface {
       const client = await this.connectDB()
       let sqlSelect = "SELECT id, id_user, title, deleted FROM lists"
       let sqlParams = []
-      if (filterBy.title){
+      if (filterBy.title) {
         sqlSelect += " WHERE title LIKE $" + (sqlParams.length + 1)
         sqlParams.push(filterBy.title)
-      } 
-      sqlSelect += " LIMIT $" + (sqlParams.length + 1) + " OFFSET $" + (sqlParams.length +2)
-      sqlParams.push(limit, (limit * page -1))
+      }
+      sqlSelect += " LIMIT $" + (sqlParams.length + 1) + " OFFSET $" + (sqlParams.length + 2)
+      sqlParams.push(limit, (limit * page - 1))
       const result = await client.query(
         sqlSelect, sqlParams
       )
@@ -26,6 +28,8 @@ export class ListServiceDB implements ListServiceInterface {
           row.get('id'),
           row.get('id_user'),
           row.get('title'),
+          row.get('movies'),
+          row.get('tvShows'),
           row.get('deleted')
         ))
       }
@@ -45,6 +49,8 @@ export class ListServiceDB implements ListServiceInterface {
         result.rows[0].get('id'),
         newList.id_user,
         newList.title,
+        [],
+        [],
         false
       )
       return list
@@ -57,13 +63,56 @@ export class ListServiceDB implements ListServiceInterface {
     try {
       const client = await this.connectDB()
       const result = await client.query(
-        "SELECT * FROM lists WHERE id = $1", [id]
+        "SELECT\
+        lists.id as id_list,\
+        id_user,\
+        lists.title as list_title,\
+        lists.deleted as list_deleted,\
+        id_movie,\
+        id_tvshow,\
+        movies.title as movie_title,\
+        tvshows.title as tvshow_title,\
+        tvshows.deleted as tvshow_deleted,\
+        movies.score as movie_score,\
+        tvshows.score as tvshow_score,\
+        movies.deleted as movie_deleted,\
+        genre FROM lists\
+        LEFT JOIN lists_movies ON lists.id = lists_movies.id_list\
+        LEFT JOIN movies ON movies.id = lists_movies.id_movie\
+        LEFT JOIN lists_tvshows ON lists.id = lists_tvshows.id_list\
+        LEFT JOIN tvshows ON tvshows.id = lists_tvshows.id_tvshow\
+        WHERE lists.id = $1", [id]
       )
+      const movies: Movie[] = []
+      for (const row of result.rows) {
+        if (row.get('id_movie')) {
+          movies.push(new Movie(
+            row.get('id_movie'),
+            row.get('movie_title'),
+            row.get('genre'),
+            row.get('movie_score'),
+            row.get('movie_deleted')
+          ))
+        }
+      }
+      const tvShows: TvShow[] = []
+      for (const row of result.rows) {
+        if (row.get('id')) {
+          tvShows.push(new TvShow(
+            row.get('id'),
+            row.get('title'),
+            row.get('tvshow_score'),
+            row.get('tvshow_deleted')
+          ))
+        }
+      }
       const list: List = new List(
-        result.rows[0].get('id'),
+        result.rows[0].get('id_list'),
         result.rows[0].get('id_user'),
-        result.rows[0].get('title'),
-        false
+        result.rows[0].get('list_title'),
+        movies,
+        [],
+        result.rows[0].get('list_deleted')
       )
       return list
     } catch (error) {
@@ -93,7 +142,9 @@ export class ListServiceDB implements ListServiceInterface {
         result.rows[0].get('id'),
         result.rows[0].get('id_user'),
         result.rows[0].get('title'),
-        result.rows[0].get('deleted')
+        result.rows[0].get('movies'),
+        result.rows[0].get('tvShows'),
+        false
       )
       return list
     } catch (error) {

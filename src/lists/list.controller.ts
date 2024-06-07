@@ -59,6 +59,8 @@ export class ListController {
         -1,
         req.body.id_user,
         req.body.title,
+        req.body.movies,
+        req.body.tvShows,
         false
       )
       newList = await listService.createList(newList)
@@ -109,6 +111,8 @@ export class ListController {
         +req.params.id,
         req.body.id_user,
         req.body.title,
+        req.body.movies,
+        req.body.tvShows,
         false
       )
       updatedList = await listService.updateList(updatedList)
@@ -128,6 +132,8 @@ export class ListController {
         +req.params.id,
         req.body.id_user,
         req.body.title,
+        req.body.movies,
+        req.body.tvShows,
         false
       )
       deletedList = await listService.deleteList(+req.params.id)
