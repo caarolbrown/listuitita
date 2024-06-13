@@ -15,3 +15,11 @@ export class MovieFilterBy extends FilterBy {
   }
 }
 
+export class UserFilterBy {
+  email: string | undefined
+
+  constructor(email: string | undefined) {
+    this.email = email
+  }
+}
+

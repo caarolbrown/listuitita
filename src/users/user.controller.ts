@@ -5,12 +5,15 @@ import User from "./user.model"
 import HttpCode from "../httpCode/httpCode.model"
 import { AppError } from "../error/error"
 import { UserServiceDB } from "./user.service.db"
+import { UserFilterBy } from "../models/filter"
 
 export class UserController {
-  public static async getUsers(_req: Request, res: Response) {
+  public static async getUsers(req: Request, res: Response) {
     try {
       const userService: UserServiceInterface = new UserServiceDB()
-      const users = await userService.getUsers()
+      const email: string | undefined = req.query.email ? String(req.query.email) : undefined
+      const userFilterBy: UserFilterBy = new UserFilterBy(email)
+      const users = await userService.getUsers(userFilterBy)
       return res.status(HttpCode.Ok).json(users)
     } catch (error) {
       if (error instanceof AppError) {

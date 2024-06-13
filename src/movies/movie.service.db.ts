@@ -24,7 +24,7 @@ export class MovieServiceDB implements MovieServiceInterface {
         }
         sqlParams.push(filterBy.genre)
       }
-      if(sortBy.score) {
+      if (sortBy.score) {
         if (sortBy.orderBy) {
           sqlSelect += " ORDER BY score DESC"
         } else {

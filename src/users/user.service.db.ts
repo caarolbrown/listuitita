@@ -1,15 +1,23 @@
 import { AppError } from "../error/error";
 import HttpCode from "../httpCode/httpCode.model";
+import List from "../lists/list.model";
+import { UserFilterBy } from "../models/filter";
 import User from "./user.model";
 import UserServiceInterface from "./user.service.interface";
 import { connect } from "ts-postgres";
 
 export class UserServiceDB implements UserServiceInterface {
-  async getUsers(): Promise<User[]> {
+  async getUsers(userFilterBy: UserFilterBy): Promise<User[]> {
     try {
       const client = await this.connectDB()
+      let sqlSelect = "SELECT * FROM users"
+      let sqlParams = []
+      if (userFilterBy.email) {
+        sqlSelect += " WHERE email LIKE $" + (sqlParams.length + 1)
+        sqlParams.push(userFilterBy.email)
+      }
       const result = await client.query(
-        "SELECT * FROM users"
+        sqlSelect, sqlParams
       )
       const users: User[] = []
       for (const row of result.rows) {
@@ -48,8 +56,31 @@ export class UserServiceDB implements UserServiceInterface {
     try {      
       const client = await this.connectDB()
       const result = await client.query(
-        "SELECT * FROM users WHERE id = $1", [id]
+        "SELECT\
+        lists.id as id_list,\
+        users.id as id_user,\
+        email,\
+        password,\
+        users.deleted as user_deleted,\
+        lists.deleted as list_deleted,\
+        FROM users,\
+        LEFT JOIN lists ON list.id_user = lists.id_user,\
+        LEFT JOIN users ON user.id = user.id,\
+        WHERE user.id = $1", [id]
       )
+      const lists: List[] = []
+      for (const row of result.rows){
+        if(row.get('id_list')){
+          lists.push(new List(
+            row.get('id_list'),
+            row.get('id_user'),
+            row.get('title'),
+            [],
+            [],
+            row.get('list_deleted')
+          ))
+        }
+      }
       let user: User = new User(
         result.rows[0].get('id'),
         result.rows[0].get('email'),

@@ -76,7 +76,8 @@ export class ListServiceDB implements ListServiceInterface {
         movies.score as movie_score,\
         tvshows.score as tvshow_score,\
         movies.deleted as movie_deleted,\
-        genre FROM lists\
+        genre\
+        FROM lists\
         LEFT JOIN lists_movies ON lists.id = lists_movies.id_list\
         LEFT JOIN movies ON movies.id = lists_movies.id_movie\
         LEFT JOIN lists_tvshows ON lists.id = lists_tvshows.id_list\

@@ -1,5 +1,4 @@
 import { Request, Response } from "express"
-//import { MovieServiceMock } from "./movie.service.mock"
 import MovieServiceInterface from "./movie.service.interface"
 import Movie from "./movie.model"
 import { AppError } from "../error/error"
@@ -18,8 +17,6 @@ export class MovieController {
       const genre: string | undefined = req.query.genre ? String(req.query.genre) : undefined
       const score: boolean = req.query.score === 'true' ? true : false 
       const orderBy: boolean = req.query.score === 'true' ? true : false
-      //const score: boolean = req.query.score ? Boolean(req.query.score).valueOf() : false
-      //const orderBy: boolean = req.query.orderBy ? Boolean(req.query.orderBy).valueOf() : false
       const page: number = req.query.page ? Number(req.query.page) : DEFAULT_MOVIE_PAGE
       const limit: number = req.query.limit ? Number(req.query.limit) : DEFAULT_MOVIE_LIMIT
       const movies = await movieService.getMovies(page, limit, new MovieFilterBy(title, genre), new SortBy(score, orderBy))
